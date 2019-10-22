@@ -12,3 +12,5 @@ const register = new Schema ({
     phone:Number,
     profilePic:String
 })
+
+module.exports = mongoose.model('register' , register)

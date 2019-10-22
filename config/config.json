@@ -1,5 +1,5 @@
 {
     "port" : "3000",
-    "mongo_uri":"mongodb+srv://kripalitandon:krun@0603@cluster0-dctri.mongodb.net/test?retryWrites=true&w=majority",
+    "mongo_uri":"mongodb+srv://kripalitandon:krun0603@cluster0-dctri.mongodb.net/test?retryWrites=true&w=majority",
     "secret":"secretKey"
 }

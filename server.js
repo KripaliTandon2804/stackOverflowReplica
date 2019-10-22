@@ -4,7 +4,7 @@ const bodyParser = require ('body-parser')
 const mongoose = require('mongoose')
 
 const config = require('./config/config.json')
-
+const port = process.env.port || config.port
 app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({extended : true}))
 
@@ -16,6 +16,9 @@ mongoose.connect(config.mongo_uri , {useNewUrlParser : true} , err => {
     }
 })
 
+const api = require('./routes/route')
+app.use('/api' , api)
+
 app.listen(port , err => {
     if(!err){
         console.log(`Server started at port ${port}`)
@@ -23,3 +26,4 @@ app.listen(port , err => {
         console.log("Server not started.")
     }
 })
+

@@ -11,3 +11,5 @@ var userLogin = new Schema ({
     token:String,
     changePassword:String
 })
+
+module.exports = mongoose.model('login' , userLogin)
