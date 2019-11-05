@@ -12,6 +12,12 @@ const question = require('../routes/question')
 router.post('/question' ,verify, question)
 
 const answer = require('../routes/answer')
-router.post('/answer' , verify ,answer)
+router.post('/answer/:id' , verify ,answer)
+
+const upvote = require('../routes/upVote')
+router.get('/upvote/:answerId' , verify ,upvote)
+
+const downvote = require('../routes/downVote')
+router.get('/downvote/:answerId' , verify , downvote)
 
 module.exports = router

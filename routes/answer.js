@@ -1,44 +1,56 @@
 var dbQuestion = require ('../model/questions')
+var dbLogin = require('../model/login')
+var dbAnswer = require('../model/answer')
 
 module.exports = (req,res) => {
-    if(!req.body.questionId || !req.body.answer || !req.body.aName || !req.body.email){
-        res.json({
-            success:false,
-            msg:"Please enter all the details"
-        })
-    }else{
-        dbQuestion.findOne({questionId : req.body.questionId} , (err , questionData) => {
-            if(err){
-                res.json({
-                    success:false,
-                    msg:"Something went wrong."
-                })
-            }else if(!questionData || questionData == null){
-                res.json({
-                    success:false,
-                    msg:"Question not found."
-                })
-            }else{
-                let answers = {
-                    answer:req.body.answer,
-                    answeredBy : req.body.aName,
-                    answerEmail : req.body.email,
-                    answeredAt : new Date()
-                }
-                dbQuestion.updateOne({questionId : req.body.questionId} , {$push : {answers : answers}} , (err , update) => {
-                    if(err){
-                        res.json({
-                            success:false,
-                            msg:"Error Occured."
-                        })
-                    }else{
-                        res.json({
-                            success:true,
-                            msg:"Answer Registered."
-                        })
-                    }
-                })
-            }
-        })
-    }
+   dbLogin.findOne({email:req.decoded.email} , (err , uLogin) => {
+       if(err){
+           res.json({
+               success:false,
+               msg:"Something went wrong."
+           })
+       }else if(!uLogin || uLogin == null){
+           res.json({
+               success:false,
+               msg:"User not found"
+           })
+       }else{
+           //console.log('req data=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->>>', req.params.id)
+           dbQuestion.findOne({questionId : req.params.id } , (err , uQuestion) => {
+               //console.log("************" , uQuestion)
+               if(err){
+                   res.json({
+                       success:false,
+                       msg:"Error Occurred.",
+                       err:err
+                   })
+               }else if(!uQuestion || uQuestion == null){
+                   res.json({
+                       success:false,
+                       msg:"Question not found."
+                   })
+               }else{
+                   new dbAnswer ({
+                       questionId : uQuestion.questionId,
+                       answerText : req.body.answerText,
+                       answerEmail : req.decoded.email,
+                       answeredAt : new Date()
+                   }).save((err ,savedAns) => {
+                       if(err){
+                           res.json({
+                               success:false,
+                               msg:"Details not saved."
+                           })
+                       }else{
+                           res.json({
+                               success:true,
+                               msg:"Answer saved.",
+                               savedAns : savedAns
+                           })
+                       }
+                   })
+               }
+           })
+       }
+   }) 
 }

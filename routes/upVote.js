@@ -1,32 +1,33 @@
 var dbQuestion = require('../model/questions')
-
+var dbLogin = require('../model/login')
+var dbAnswer = require ('../model/answer')
 module.exports = (req,res) => {
-    if(!req.body.answerId || !req.body.uName || !req.body.uEmail){
-        res.json({
-            success:false,
-            msg:"Something went wrong."
-        })
-    }else{
-        dbQuestion.findOne({_id : req.body.answerId} , (err , liked) => {
-            if(err){
-                res.json({
-                    success:false,
-                    msg:"Please try again later."
-                })
-            }else if(!liked || liked == null){
-                res.json({
-                    success:false,
-                    msg:"Answer not found."
-                })
-            }else{
-                like = {
-                    upVote:true,
-                    upVotedBy:req.body.uName,
-                    upVoteEmail:req.body.uEmail,
-                    upVotedAt:new Date()
-                }
-                dbQuestion.findOneAndUpdate({_id : req.body.answerId} ,{$set : {'answers.upVote' : like}} , (err , u))
-            }
-        })
-    }
+   if(!req.params.answerId){
+       res.json({
+           success:false,
+           msg:"Please provide all the details."
+       })
+   }else{
+       dbAnswer.findById({_id : req.params.answerId} , (err , data) => {
+           if(err){
+               res.json({
+                   success:false,
+                   msg:"Something went wrong"
+               })
+           }else{
+               dbAnswer.findOneAndUpdate({_id : req.params.answerId},{$push : {upVote : req.decoded.email}} ,(err,uVote) => {
+                   if(err){
+                       res.json({
+                           success:false,
+                           msg:"Some error occured."
+                       })
+                   }else{
+                        res.json({
+                            success:true
+                        })
+                   }
+               })
+           }
+       })
+   }
 }
