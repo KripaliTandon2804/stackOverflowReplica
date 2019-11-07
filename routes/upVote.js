@@ -15,19 +15,41 @@ module.exports = (req,res) => {
                    msg:"Something went wrong"
                })
            }else{
-               dbAnswer.findOneAndUpdate({_id : req.params.answerId},{$push : {upVote : req.decoded.email}} ,(err,uVote) => {
-                   if(err){
-                       res.json({
-                           success:false,
-                           msg:"Some error occured."
-                       })
-                   }else{
+            for (var i in data.downVote){
+                if(data.downVote[i] === req.decoded.email){
+                    var deleted = data.downVote.splice(i , 1)
+                }
+            }
+            if(deleted){
+                dbAnswer.findOneAndUpdate({_id : req.params.answerId} , {$addToSet : {upVote : req.decoded.email} , $set : {downVote : data.downVote}} , (err,updated) => {
+                    if(err){
                         res.json({
-                            success:true
+                            success:false,
+                            msg:"Please try again later"
                         })
-                   }
-               })
+                    }else{
+                        res.json({
+                            success:true,
+                            msg:"Updated"
+                        })
+                    }
+                })
+            }else{
+                dbAnswer.findOneAndUpdate({_id:req.params.answerId} , {$addToSet : {upVote : req.decoded.email}} ,(err, sUpdated) => {
+                    if(err){
+                        res.json({
+                            success:false,
+                            msg:"Error Occured"
+                        })
+                    }else{
+                        res.json({
+                            success:true,
+                            msg:"Liked."
+                        })
+                    }
+                })
+            }
            }
-       })
+        })                                 
    }
 }
