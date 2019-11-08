@@ -14,3 +14,5 @@ var profile = new Schema ({
     language:{},
     createdAt:Date
 })
+
+module.exports = mongoose.model ('profile' , profile)

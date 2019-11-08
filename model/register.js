@@ -7,10 +7,16 @@ const register = new Schema ({
     password : String,
     createdAt : {
         type:Date,
-        default:new Date
+        default:new Date()
     },
     phone:Number,
-    profilePic:String
+    profilePic:String,
+    emailVerify : {
+        otp : Number,
+        verified: Boolean,
+        verifiedAt : Date
+    },
+    token : String
 })
 
 module.exports = mongoose.model('register' , register)

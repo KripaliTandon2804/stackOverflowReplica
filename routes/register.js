@@ -1,58 +1,69 @@
 var dbRegister = require('../model/register')
+var mailer = require('./nodemailer')
+var jwt = require('jsonwebtoken')
+
+var generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000)
+}
 
 module.exports = (req,res)=> {
-
-    if(!req.body.name || !req.body.phone || !req.body.email || !req.body.password){
-        res.json({
-            success:false,
-            msg:"Please provide all the details."
-        })
-    }else{
-        //console.log("dataaaaaaaaaaaa")
-        dbRegister.findOne({email:req.body.email} ,(err ,data) => {
-            
-            if(err){
+    dbRegister.findOne({email:req.body.email} , (err ,registerData) => {
+        if(err){
+            res.json({
+                success:false,
+                msg:"Something went wrong."
+            })
+        }else{
+            if(!req.body.name || !req.body.phone || !req.body.email || !req.body.password){
                 res.json({
                     success:false,
-                    msg: "Something went wrong"
-                })
-            }else if(!data || data == null){
-                new dbRegister ({
-                    name:req.body.name,
-                    phone:req.body.phone,
-                    email:req.body.email,
-                    password:req.body.password,
-                    createdAt : new Date()
-                    //profilePic:req.body.profilePic
-                }).save((err ,savedData) => {
-                    if(err){
-                        res.json({
-                            success:false,
-                            msg:"Please try again"
-                        })
-                    }else{
-                        res.json({
-                            success:true,
-                            msg:"User registered."
-                        })
-                    }
+                    msg:"Please provide all the details."
                 })
             }else{
-                dbRegister.findOneAndUpdate({email:req.body.email} , {name : req.body.name , password : req.body.password , phone : req.body.phone} , (err , update) => {
-                    if(err){
-                        res.json({
-                            success:false,
-                            msg:"Something went wrong"
-                        })
-                    }else{
-                        res.json({
-                            success:true,
-                            msg:"Registration done."
-                        })
-                    }
-                })
-            }                
-            
+                    new dbRegister ({
+                        name:req.body.name,
+                        phone:req.body.phone,
+                        email:req.body.email,
+                        password:req.body.password,
+                        createdAt : new Date(),
+                        //profilePic:req.body.profilePic
+                        emailVerify : {
+                            otp : generateOtp(),
+                            verified : false
+                        }
+                    }).save((err ,savedData) => {
+                        if(err){
+                            res.json({
+                                success:false,
+                                msg:"Please try again"
+                            })
+                        }else{
+                            let msg = "Your OTP for email verification is"
+                            let token = jwt.sign({email : req.body.email ,phone : req.body.phone , name:req.body.name} , req.app.get('secretKey'))
+                            dbRegister.findOneAndUpdate({email : req.body.email} ,{$set : {token : token}} ,(err ,updated) => {
+                                if(err){
+                                    res.json({
+                                        success:false,
+                                        msg:"Please try again later."
+                                    })
+                                }else{
+                                    mailer(savedData.email , msg ,savedData.emailVerify.otp.toString()).then(mail => {
+                                        res.json({
+                                            success:true,
+                                            msg:"Please verify email",
+                                            token:token
+                                        })
+                                    }).catch(err => {
+                                        res.json({
+                                            success:false,
+                                            err:err
+                                        })
+                                    })                                    
+                                }
+                            })
+                        }
+                    })                                                   
+                }
+            }
         })
-    }
-}
+    }  

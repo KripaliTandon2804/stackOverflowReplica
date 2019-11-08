@@ -7,9 +7,17 @@ var userLogin = new Schema ({
         unique : true
     },
     email : String,
+    name : String,
     password:String,
+    phone : Number,
     token:String,
-    changePassword:String
+    changePassword:String,
+    emailVerify : {
+        otp : Number,
+        verified : Boolean,
+        verifiedAt : Date
+    },
+    createdAt : Date
 })
 
 module.exports = mongoose.model('login' , userLogin)
