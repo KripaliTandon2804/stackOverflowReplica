@@ -33,27 +33,29 @@ module.exports = (req,res) => {
             msg:"Please provide all the details."
         })
     }else{
-        dbRegister.findOne({email:req.body.email} , (err ,logindata) => {
+        dbRegister.findOne({email:req.body.email} , (err ,registerData) => {
             
             if(err){
                 res.json({
                     success:false,
                     msg:"Please try again."
                 })
-            }else if(!logindata || logindata == null){
+            }else if(!registerData || registerData == null){
                 res.json({
                     success:false,
                     msg:"Please register first."
                 })
-            }else if(logindata.password == req.body.password){
+            }else if(registerData.password == req.body.password){
                 
                     generateUserId().then(USID => {
                         var date = moment().format('DD-MM-YY')
                         var acDate = moment(date , 'DD-MM-YY').toDate()
                         new dbLogin({
                             userId:USID,
-                            email:logindata.email,
-                            password:logindata.password
+                            email:registerData.email,
+                            name :registerData.name,
+                            phone : registerData.phone,
+                            password:registerData.password
                         }).save((err , saved) => {
                             if(err){
                                 res.json({

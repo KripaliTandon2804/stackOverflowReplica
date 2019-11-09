@@ -5,7 +5,6 @@ var profile = new Schema ({
     userId:String,
     email:String,
     fullName:String,
-    password:String,
     phone:Number,
     profilePic:String,
     website:String,
