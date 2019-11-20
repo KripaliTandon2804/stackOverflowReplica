@@ -1,6 +1,6 @@
 var nodemailer = require('nodemailer')
 
-module.exports = (email , subject , msg) => {
+exports.sendMails = (email , subject , msg) => {
     return new Promise(function(resolve , reject) {
         
         let transporter = nodemailer.createTransport({
@@ -15,7 +15,7 @@ module.exports = (email , subject , msg) => {
         
         let message = {
             text : "",
-            from : "kripali<no-reply>",
+            from : "",
             to : email,
             subject : subject,
             html : msg
@@ -26,6 +26,7 @@ module.exports = (email , subject , msg) => {
                 reject(err)
             }else{
                 resolve(data)
+                console.log("############" ,data)
             }
         })
     })
