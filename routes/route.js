@@ -8,6 +8,9 @@ router.post('/register' , register)
 const login = require('../routes/login')
 router.post('/login' , login)
 
+const changePass = require('../routes/changePassword')
+router.post('/changePassword' , verify , changePass)
+
 const question = require('../routes/question')
 router.post('/question' ,verify, question)
 
