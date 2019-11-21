@@ -39,9 +39,7 @@ module.exports = (req,res)=> {
                             })
                         }else{
                             let msg = "Your OTP for email verification is"
-                            //console.log("*************" , savedData)
                             let token = jwt.sign({email : req.body.email ,phone : req.body.phone , name:req.body.name} , req.app.get('secretKey'))
-                            //console.log("++++++++",token)
                             dbRegister.findOneAndUpdate({email : req.body.email} ,{$set : {token : token}} ,(err ,updated) => {
                                 if(err){
                                     res.json({
@@ -50,9 +48,7 @@ module.exports = (req,res)=> {
                                         err:err
                                     })
                                 }else{
-                            console.log("::::::::::::",savedData.email)
                                     mailer.sendMails(savedData.email , msg ,savedData.emailVerify.otp.toString()).then(mail => {
-                                        console.log("&&&&&&&&&&&&&" ,savedData.email)
                                         res.json({
                                             success:true,
                                             msg:"Please verify email",
