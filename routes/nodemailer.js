@@ -8,8 +8,8 @@ exports.sendMails = (email , subject , msg) => {
             port: 587,
             secure: false,
             auth: {
-                user : 'kripalitandon2804@gmail.com',
-                pass : 'abc@123'
+                user : 'mdaqib0111@gmail.com',
+                pass : 'abc1234@'
             }
         })
         

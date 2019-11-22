@@ -1,6 +1,7 @@
 var dbRegister = require('../model/register')
 var dbLogin = require('../model/login')
 var mailer = require('./nodemailer')
+var moment = require('moment')
 
 var year = moment().format('YY')
 var month = moment().format('MM')
@@ -48,6 +49,7 @@ module.exports = (req,res) => {
                     var date = moment().format('DD-MM-YY')
                     var acDate = moment(date , 'DD-MM-YY').toDate()
                         new dbLogin({
+                            userId : USID,
                             name:registerData.name,
                             phone:registerData.phone,
                             email:registerData.email,
@@ -84,8 +86,7 @@ module.exports = (req,res) => {
                                 })
                             }
                         })
-                })
-                
+                })                
             }
         })
     }

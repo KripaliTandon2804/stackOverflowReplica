@@ -10,24 +10,24 @@ module.exports = (req,res) => {
             msg:"Please provide all the details."
         })
     }else{
-        dbLogin.findOne({email:req.body.email} , (err ,registerData) => {            
+        dbLogin.findOne({email:req.body.email} , (err ,loginData) => {
             if(err){
                 res.json({
                     success:false,
                     msg:"Please try again."
                 })
-            }else if(!registerData || registerData == null){
+            }else if(!loginData || loginData == null){
                 res.json({
                     success:false,
                     msg:"Please register first."
                 })
-            }else if(registerData.password == req.body.password){                                                                                  
+            }else if(loginData.password == req.body.password){                                                                                  
             var tokenData = {
-                _id : saved._id,
-                userId:saved.userId,
-                name : saved.name,
-                email:saved.email,
-                phone:saved.phone
+                _id : loginData._id,
+                userId:loginData.userId,
+                name : loginData.name,
+                email:loginData.email,
+                phone:loginData.phone
             }
             var token = jwt.sign(tokenData ,req.app.get('secretKey'))
             res.json({

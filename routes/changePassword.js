@@ -19,13 +19,13 @@ module.exports = (req,res) => {
                     success:false,
                     msg : "Please register first."
                 })
-            }else if(loginData.password == req.body.oldPass){
+            }else if(loginData.password !== req.body.oldPass){
                 res.json({
                     success:false,
                     msg:"Please enter the correct password."
                 })
             }else if(req.body.newPass == req.body.confirmPass){
-                dbLogin.findOneAndUpdate({userId : req.decoded.userId} , {password : req.body.newPass} , (err , updated) => {
+                dbLogin.findOneAndUpdate({userId : req.decoded.userId} , {$set :{password : req.body.newPass}} , (err , updated) => {
                     if(err){
                         res.json({
                             success:false,
