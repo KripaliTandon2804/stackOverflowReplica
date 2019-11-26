@@ -1,5 +1,5 @@
 let contact = `Please contact the support for any query`
-let sign = `Regards`
+let signature = `Regards`
 
 exports.welcomeEmail = (name) => {
     return{

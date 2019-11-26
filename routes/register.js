@@ -1,6 +1,9 @@
 var dbRegister = require('../model/register')
 var mailer = require('./nodemailer')
+var emailData = require('../routes/emailData')
 var jwt = require('jsonwebtoken')
+var ejs = require('ejs')
+var path = require('path')
 
 var generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000)
@@ -43,8 +46,9 @@ module.exports = (req,res)=> {
                             msg:"Please try again"
                         })
                     }else{
-                        let msg = "Your OTP for email verification is"
+                        let msg = "Your OTP for email verification is" + savedData.emailVerify.otp
                         let token = jwt.sign({email : req.body.email ,phone : req.body.phone , name:req.body.name} , req.app.get('secretKey'))
+                        
                         dbRegister.findOneAndUpdate({email : req.body.email} ,{$set : {token : token}} ,(err ,updated) => {
                             if(err){
                                 res.json({
@@ -53,18 +57,32 @@ module.exports = (req,res)=> {
                                     err:err
                                 })
                             }else{
-                                mailer.sendMails(savedData.email , msg ,savedData.emailVerify.otp.toString()).then(mail => {
-                                    res.json({
-                                        success:true,
-                                        msg:"Please verify email",
-                                        token:token
-                                    })
-                                }).catch(err => {
-                                    res.json({
-                                        success:false,
-                                        err:err
-                                    })
-                                })                                    
+                                emailObj = emailData.welcomeEmail(updated.name)
+                                ejs.renderFile(path.join(__dirname + '../../html/first.ejs'),emailObj,(err ,html) => {
+                                    console.log("^^^^^^^^^^^^^^" , path.join(__dirname + '../../html/first.ejs'))
+                                    if(err){
+                                        res.json({
+                                            success:false,
+                                            msg:"Error occurred",
+                                            err:err
+                                        })
+                                    }else{
+                                        
+                                        mailer.sendMails(savedData.email , msg ,html).then(mail => {
+                                            res.json({
+                                                success:true,
+                                                msg:"Please verify email",
+                                                token:token
+                                            })
+                                        }).catch(err => {
+                                            res.json({
+                                                success:false,
+                                                err:err
+                                            })
+                                        })
+                                    }
+                                })
+                                                                    
                             }
                         })
                     }

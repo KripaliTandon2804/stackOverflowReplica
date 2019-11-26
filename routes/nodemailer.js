@@ -1,6 +1,6 @@
 var nodemailer = require('nodemailer')
 
-exports.sendMails = (email , subject , msg) => {
+exports.sendMails = (email , subject , html) => {
     return new Promise(function(resolve , reject) {
         
         let transporter = nodemailer.createTransport({
@@ -18,7 +18,7 @@ exports.sendMails = (email , subject , msg) => {
             from : "",
             to : email,
             subject : subject,
-            html : msg
+            html : html
         }
 
         transporter.sendMail(message , function(err , data) {
