@@ -26,4 +26,7 @@ router.get('/upvote/:answerId' , verify ,upvote)
 const downvote = require('../routes/downVote')
 router.get('/downvote/:answerId' , verify , downvote)
 
+const profilePic = require('../routes/uploadPic')
+router.post('/profilePic' , verify , profilePic)
+
 module.exports = router

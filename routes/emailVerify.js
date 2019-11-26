@@ -1,5 +1,6 @@
 var dbRegister = require('../model/register')
 var dbLogin = require('../model/login')
+var emailData = require('./emailData')
 var mailer = require('./nodemailer')
 var moment = require('moment')
 
@@ -65,6 +66,7 @@ module.exports = (req,res) => {
                                 let msg = "Welcome"
                                 let subject = "Welcome Mail"
                                 dbRegister.findOneAndUpdate({email : req.decoded.email} ,{$set : {'emailVerify.verified' : true , 'emailVerify.verifiedAt' : new Date()}} , (err , updated) => {
+                                    //let emailObj = emailData.welcomeEmail()
                                     if(err){
                                         res.json({
                                             success:false,

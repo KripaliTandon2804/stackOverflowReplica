@@ -32,10 +32,19 @@ module.exports = (req,res) => {
                             msg:"Please try again later."
                         })
                     }else{
-                        res.json({
-                            success:true,
-                            msg:"Password Changed."
-                        })
+                        dbRegister.findOneAndUpdate({email : req.decoded.email} , {$set : {password : req.body.newPass}} , (err , sUpdated)=> {
+                            if(err){
+                                res.json({
+                                    success:false,
+                                    msg:"Try again."
+                                })
+                            }else{
+                                res.json({
+                                    success:true,
+                                    msg:"Password Changed."
+                                })
+                            }
+                        })                        
                     }
                 })
             }else{
