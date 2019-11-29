@@ -29,4 +29,7 @@ router.get('/downvote/:answerId' , verify , downvote)
 const profilePic = require('../routes/uploadPic')
 router.post('/profilePic' , verify , profilePic)
 
+const resend = require('../routes/resend')
+router.post('/resend' , verify ,resend)
+
 module.exports = router
