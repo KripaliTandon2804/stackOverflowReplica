@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const verify = require('../routes/tokenVerify')
 
+const logger = require('./handlers/error')
+
 const register = require('../routes/register')
 router.post('/register' , register)
 
@@ -31,5 +33,13 @@ router.post('/profilePic' , verify , profilePic)
 
 const resend = require('../routes/resend')
 router.post('/resend' , verify ,resend)
+
+router.use((err,req,res,next) => {
+    logger.error(`${new Date().toISOString()} | ${req.method} - ${req.originalUrl} | IP : ${req.ip} | Error : ${err.message} | Body: ${JSON.stringify(req.body)} | Headers: ${JSON.stringify(req.headers)}`);
+    res.json({
+        success:false,
+        msg:"Something went wrong ,please try again later"
+    })
+})
 
 module.exports = router
